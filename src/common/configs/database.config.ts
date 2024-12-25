@@ -1,33 +1,16 @@
 import { registerAs } from '@nestjs/config';
-import { config as dotenvConfig } from 'dotenv';
-import { User } from 'src/database/entities';
-import { DataSource, DataSourceOptions } from 'typeorm';
 
-dotenvConfig({ path: '.env' });
-
-export const DbConfig: DataSourceOptions = {
-  type: 'mysql',
-  host: 'learnapp_mysql',
-  port: 3306,
-  username: 'root',
-  password: 'password',
-  database: 'learn_app',
-  synchronize: false, // Always set to false in production
-  logging: false, // Enable logging for debugging
-  // entities: ['./src/database/entities/*.ts'],
-  entities: [User],
+export const config = {
+  type: 'postgres',
+  host: process.env.DB_HOST || 'db',
+  port: +process.env.DB_PORT || 5432,
+  username: process.env.DB_USERNAME || 'admin',
+  password: process.env.DB_PASSWORD || 'password',
+  database: process.env.DB_DATABASE || 'testdb',
+  synchronize: false, // Set to false in production
+  logging: false,
   migrationsRun: true,
-  // migrations: ['./src/database/migrations/*.ts'],
+  autoLoadEntities: true,
   migrations: ['dist/database/migrations/*.js'],
 };
-
-const AppDataSource = new DataSource(DbConfig);
-AppDataSource.initialize()
-  .then(() => {
-    console.log('🟢 Data Source has been initialized!');
-  })
-  .catch((err) => {
-    console.error('🟥 Error during Data Source initialization', err);
-  });
-
-export default AppDataSource;
+export const DatabseConfig = registerAs('database', () => (config));

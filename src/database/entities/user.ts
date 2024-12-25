@@ -16,8 +16,8 @@ export class User extends CustomBaseEntity {
     @Column({ nullable: false, unique: true })
     public phone: string;
 
-    @Column({ type: 'datetime' })
-    public phone_verified_at?: Date;
+    @Column()
+    public phone_verified_at?: string;
 
     @Column({ type: 'date', nullable: true })
     public date_of_birth?: Date;

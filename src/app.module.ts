@@ -6,14 +6,14 @@ import { ConfigModule } from '@nestjs/config';
 import { ModulesModule } from './modules/modules.module';
 import { OtpModule } from './imp/otp/otp.module';
 import { SmsModule } from './imp/sms/sms.module';
-import { JwtConfig, SmsConfig } from './common/configs';
+import { DatabseConfig, JwtConfig, ServerConfig, SmsConfig } from './common/configs';
 import { TokenModule } from './imp/token/token.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [SmsConfig, JwtConfig]
+      load: [ServerConfig, DatabseConfig, SmsConfig, JwtConfig]
     }),
     DatabaseModule,
     ModulesModule,

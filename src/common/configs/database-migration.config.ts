@@ -5,11 +5,11 @@ dotenvConfig({ path: '.env' });
 
 export const DbConfig: DataSourceOptions = {
   type: 'mysql',
-  host: 'learnapp_mysql',
-  port: 3306,
-  username: 'root',
-  password: 'password',
-  database: 'learn_app',
+  host: process.env.DB_HOST,
+  port: +process.env.DB_PORT,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   synchronize: false, // Always set to false in production
   logging: false, // Enable logging for debugging
   entities: ['./src/database/entities/*.ts'],

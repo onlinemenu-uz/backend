@@ -1,12 +1,34 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { DbConfig } from 'src/common/configs';
 import { RedisModule } from './redis/redis.module';
+import { DatabseConfig } from 'src/common/configs';
+import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(DbConfig), RedisModule],
+  imports: [
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const config = configService.getOrThrow<ConfigType<typeof DatabseConfig>>('database')
+        return {
+          type: 'postgres',
+          host: config.host,
+          port: +config.port,
+          username: config.username,
+          password: config.password,
+          database: config.database,
+          synchronize: config.synchronize,
+          logging: config.logging,
+          autoLoadEntities: config.autoLoadEntities,
+          migrations: config.migrations,
+          migrationsRun: config.migrationsRun,
+        }
+      },
+    }),
+    RedisModule],
 })
 export class DatabaseModule {
-  constructor(private dataSource: DataSource) {}
+  constructor(private dataSource: DataSource) { }
 }

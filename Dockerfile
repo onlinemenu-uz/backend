@@ -1,42 +1,24 @@
-# Stage 1: development Stage
-FROM node:22.11-alpine3.20 AS development
+# Use the official Node.js image as the base image
+FROM node:20
 
+# Set the working directory inside the container
 WORKDIR /usr/src/app
 
-COPY pnpm-lock.yaml ./
-COPY package.json ./
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
-# Set environment variables
-ENV PNPM_HOME=/root/.local/share/pnpm
-ENV PATH=$PNPM_HOME:$PATH
-ENV SHELL=/bin/sh
+# Install the application dependencies
+RUN npm install
 
-# Install pnpm and dependencies
-RUN npm install -g pnpm && pnpm install
-
+# Copy the rest of the application files
 COPY . .
 
-RUN pnpm run build
+# Build the NestJS application
+RUN npm run build
 
+# Expose the application port
+# EXPOSE 3000
 
-
-# Stage 2: Production Stage
-FROM node:22.11-alpine3.20 AS production
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-WORKDIR /usr/src/app
-
-COPY pnpm-lock.yaml ./
-COPY package.json ./
-
-# Install pnpm and production dependencies
-RUN npm install -g pnpm && pnpm install --prod
-
-COPY . .
-
-# Copy build files from development stage
-COPY --from=development /usr/src/app/dist ./dist
-
-CMD ["node", "dist/main"]
+# Command to run the application
+# CMD ["node", "dist/main"]
+CMD [ "npm", "run", "start:dev" ]

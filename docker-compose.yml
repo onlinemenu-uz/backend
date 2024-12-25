@@ -1,84 +1,62 @@
 services:
-  nginx:
-    build: ./.docker/images/nginx
+  db:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
     ports:
-      - "80:80"
-    depends_on:
-      - dev
-    networks:
-      - app_network
+      - '5432:5432'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  dev:
-    container_name: dev
+  backend:
+    container_name: backend
     build:
       context: .
-      target: development
       dockerfile: ./Dockerfile
-    command: npm run start:debug
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+      - PORT=${APP_PORT}
     ports:
       - 3000:3000
-      - 9229:9229
-    env_file:
-      - .env
-    networks:
-      - app_network
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
-    restart: unless-stopped
     depends_on:
-      - mysql
+      - db
       - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  # prod:
-  #   container_name: nestjs_api_prod
-  #   image: nestjs-api-prod:1.0.0
-  #   build:
-  #     context: .
-  #     target: production
-  #     dockerfile: ./Dockerfile
-  #   command: npm run start:prod
-  #   ports:
-  #     - 3000:3000
-  #     - 9229:9229
-  #   networks:
-  #     - nesjs-network
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   restart: unless-stopped
-
-  mysql:
-    image: mysql:latest
-    container_name: learnapp_mysql
-    env_file:
-      - .env
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - app_network
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: learnapp_pma
-    links:
-      - mysql
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
-      UPLOAD_LIMIT: 100000000
+  pgadmin:
+    image: dpage/pgadmin4
     restart: always
+    container_name: nest-pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=pgadmin4
     ports:
-      - "8081:80"
-    networks:
-      - app_network
+      - '5050:80'
+    depends_on:
+      - db
 
   redis:
     image: redis:latest
-    container_name: app_redis
+    container_name: redis
     command: [ "sh", "-c", "redis-server --requirepass $${REDIS_PASSWORD}" ]
     restart: always
     ports:
@@ -87,15 +65,14 @@ services:
       - redis_data:/data
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
-    networks:
-      - app_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
-  mysql_data:
+  pg_data:
     driver: local
   redis_data:
     driver: local
-
-networks:
-  app_network:
-    driver: bridge

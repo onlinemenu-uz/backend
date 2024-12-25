@@ -35,7 +35,7 @@ export class Users1731046369694 implements MigrationInterface {
           },
           {
             name: 'phone_verified_at',
-            type: 'datetime',
+            type: 'date',
             isNullable: true,
           },
           {
@@ -50,7 +50,7 @@ export class Users1731046369694 implements MigrationInterface {
           },
           {
             name: 'email',
-            type: 'varchar',
+            type: 'varchar', 
             isUnique: true,
             isNullable: true,
           },

@@ -6,7 +6,7 @@ config()
 
 const conf = {
     //@ts-ignore
-    host: 'app_redis' ?? process.env.REDIS_HOST,
+    host: process.env.REDIS_HOST,
     port: +process.env.REDIS_PORT,
     password: process.env.REDIS_PASSWORD,
 }
