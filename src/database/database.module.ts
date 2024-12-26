@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
 import { RedisModule } from './redis/redis.module';
 import { DatabseConfig } from 'src/common/configs';
 import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [

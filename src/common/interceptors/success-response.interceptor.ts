@@ -12,16 +12,12 @@ export class SuccessResponseInterceptor implements NestInterceptor {
         data: unknown;
         created_at: string;
     }> {
-        if (_context.getType() == "telegraf" as string) {
-            return next.handle();
-        }
-
         return next.handle().pipe(
             map((data) => {
                 return {
                     message: 'The request was completed successfully',
                     data: data,
-                    created_at: new Date().toISOString(),
+                    created_at: new Date().toLocaleString(),
                 };
             })
         );

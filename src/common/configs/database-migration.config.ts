@@ -4,18 +4,19 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 dotenvConfig({ path: '.env' });
 
 export const DbConfig: DataSourceOptions = {
-  type: 'mysql',
+  type: 'postgres',
   host: process.env.DB_HOST,
   port: +process.env.DB_PORT,
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: false, // Always set to false in production
-  logging: false, // Enable logging for debugging
-  entities: ['./src/database/entities/*.ts'],
+  logging: true, // Enable logging for debugging
+  entities: ['./dist/database/entities/*.js'],
   migrationsRun: true,
-  migrations: ['./src/database/migrations/*.ts'],
-};
+  migrations: ['./dist/database/migrations/*.js'],
+  // subscribers: ['./dist/database/subscribers/*.js'],
+}; 
 
 const AppDataSource = new DataSource(DbConfig);
 AppDataSource.initialize()

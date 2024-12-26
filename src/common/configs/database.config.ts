@@ -11,6 +11,9 @@ export const config = {
   logging: false,
   migrationsRun: true,
   autoLoadEntities: true,
-  migrations: ['dist/database/migrations/*.js'],
+  migrations: ['./src/database/migrations/*.js'],
+  subscribers: ['./src/database/subscribers/*.ts'],
+
+
 };
 export const DatabseConfig = registerAs('database', () => (config));
