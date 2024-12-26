@@ -3,6 +3,8 @@ import { SignUpDto } from './dto/sign-up.dto';
 import { UserRepository } from '../users/user.repository';
 import { SignUpResponseDto } from './dto/sign-up-response.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { CheckExistsDto } from './dto/check-exists.dto';
+import { ExistByPhoneResponse } from 'src/common/interfaces/responses';
 
 @Injectable()
 export class AuthService {
@@ -31,5 +33,12 @@ export class AuthService {
     // // TODO: Generate a JWT and return it here
     // // instead of the user object
     // return result;
+  }
+
+  async checkExists(checkExistsDto: CheckExistsDto): Promise<ExistByPhoneResponse> {
+    const user = await this.usersRepository.findOneBy({ phone: checkExistsDto.phone });
+    return {
+      exists: !!user
+    }
   }
 }

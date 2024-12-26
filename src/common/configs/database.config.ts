@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import { subscribers } from 'src/database/subscribers';
 
 export const config = {
   type: 'postgres',
@@ -12,7 +13,7 @@ export const config = {
   migrationsRun: true,
   autoLoadEntities: true,
   migrations: ['./src/database/migrations/*.js'],
-  subscribers: ['./src/database/subscribers/*.ts'],
+  subscribers: subscribers,
 
 
 };

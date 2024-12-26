@@ -24,6 +24,7 @@ import { DataSource } from 'typeorm';
           autoLoadEntities: config.autoLoadEntities,
           migrations: config.migrations,
           migrationsRun: config.migrationsRun,
+          subscribers: config.subscribers,
         }
       },
     }),
